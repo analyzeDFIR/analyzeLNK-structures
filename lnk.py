@@ -179,7 +179,7 @@ LNKLocationInformationHeader = Struct(
 
 LNKLinkTargetIDListItemID = Struct(
     'Size'                  / Int16ul,
-    'Data'                  / Bytes(this.Size - 2)
+    'Data'                  / If(this.Size > 0, Bytes(this.Size - 2))
 )
 
 LNKLinkTargetIDListSize = Int16ul
