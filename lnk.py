@@ -199,7 +199,6 @@ LNKFileHeader = Struct(
     'RawLastModifiedTime'   / NTFSFILETIME,
     'FileSize'              / Int32ul,
     'IconIndex'             / Int32sl,
-        header.CreateTime = WindowsTime.parse_filetime(header.RawCreateTime)
     'ShowWindow'            / LNKShowWindow,
     'HotKey'                / LNKHotKey,
     Padding(10)
