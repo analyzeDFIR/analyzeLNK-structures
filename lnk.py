@@ -133,9 +133,9 @@ LNKConsoleDataBlock = Struct(
     'RawColorTable'                 / Bytes(64)
 )
 
-LNKNetworkShareInformation = Struct(
+LNKNetworkShareInformationHeader = Struct(
     'Size'                  / Int32ul,
-    'Flags'                 / FlagsEnum(
+    'Flags'                 / FlagsEnum(Int32ul,
         ValidDevice     = 0x01,
         ValidNetType    = 0x02
     ),
@@ -146,9 +146,9 @@ LNKNetworkShareInformation = Struct(
     'UDeviceNameOffset'     / If(this.ShareNameOffset > 20, Int32ul)
 )
 
-LNKVolumeInformation = Struct(
+LNKVolumeInformationHeader = Struct(
     'Size'                  / Int32ul,
-    'DriveType'             / Enum(
+    'DriveType'             / Enum(Int32ul,
         DRIVE_UNKNOWN       = 0x00,
         DRIVE_NO_ROOT_DIR   = 0x01,
         DRIVE_REMOVABLE     = 0x02,
@@ -162,19 +162,19 @@ LNKVolumeInformation = Struct(
     'UVolumeLabelOffset'    / If(this.VolumeLabelOffset > 16, Int32ul)
 )
 
-LNKLocationInformation = Struct(
-    'Size'                  / Int32ul,
-    'HeaderSize'            / Int32ul,
-    'Flags'                 / FlagsEnum(
+LNKLocationInformationHeader = Struct(
+    'Size'                              / Int32ul,
+    'HeaderSize'                        / Int32ul,
+    'Flags'                             / FlagsEnum(Int32ul,
         VolumeIDAndLocalBasePath                = 0x01,
         CommonNetworkRelativeLinkAndPathSuffix  = 0x02
     ),
-    'VolumeOffset'          / Int32ul,
-    'LocalPathOffset'       / Int32ul,
-    'NetworkShareOffset'    / Int32ul,
-    'CommonPathOffset'      / Int32ul,
-    'ULocalPathOffset'      / If(this.HeaderSize > 28, Int32ul),
-    'UCommonPathOffset'     / If(this.HeaderSize > 32, Int32ul)
+    'VolumeIDOffset'                    / Int32ul,
+    'LocalBasePathOffset'               / Int32ul,
+    'CommonNetworkRelativeLinkOffset'   / Int32ul,
+    'CommonPathSuffixOffset'            / Int32ul,
+    'ULocalBasePathOffset'              / If(this.HeaderSize > 28, Int32ul),
+    'UCommonPathSuffixOffset'           / If(this.HeaderSize > 32, Int32ul)
 )
 
 LNKLinkTargetIDListItemID = Struct(
@@ -190,7 +190,7 @@ LNKHotKey = Struct(
 )
 
 LNKFileHeader = Struct(
-    'HeaderSize'            / Const(0x4C, In32ul),
+    'HeaderSize'            / Const(0x4C, Int32ul),
     'LNKClassIdentifier'    / NTFSGUID,
     'DataFlags'             / LNKDataFlags,
     'FileAttributeFlags'    / Int32ul,
@@ -199,6 +199,7 @@ LNKFileHeader = Struct(
     'RawLastModifiedTime'   / NTFSFILETIME,
     'FileSize'              / Int32ul,
     'IconIndex'             / Int32sl,
+        header.CreateTime = WindowsTime.parse_filetime(header.RawCreateTime)
     'ShowWindow'            / LNKShowWindow,
     'HotKey'                / LNKHotKey,
     Padding(10)
