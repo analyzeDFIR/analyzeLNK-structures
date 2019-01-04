@@ -141,9 +141,13 @@ LNKNetworkShareInformationHeader = Struct(
     ),
     'ShareNameOffset'       / Int32ul,
     'DeviceNameOffset'      / Int32ul,
-    'NetworkProviderType'   / LNKNetworkProviderType,
-    'UShareNameOffset'      / If(this.ShareNameOffset > 20, Int32ul),
-    'UDeviceNameOffset'     / If(this.ShareNameOffset > 20, Int32ul)
+    'NetworkProviderType'   / IfThenElse(
+        this.Flags.ValidNetType, 
+        LNKNetworkProviderType,
+        Int32ul
+    ),
+    'UShareNameOffset'      / If(this.ShareNameOffset > 0x14, Int32ul),
+    'UDeviceNameOffset'     / If(this.ShareNameOffset > 0x14, Int32ul)
 )
 
 LNKVolumeInformationHeader = Struct(
