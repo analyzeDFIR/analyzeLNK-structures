@@ -31,77 +31,52 @@ except ImportError:
     from .shared_structures.windows.misc import NTFSFILETIME
 
 LNKTrackerDataBlock = Struct(
-    'Size'                          / Const(0x60, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x03', Int32ul),
-    'Length'                        / Const(0x58, Int32ul),
-    'Version'                       / Const(0x00, Int32ul),
+    'Length'                / Const(0x58, Int32ul),
+    'Version'               / Const(0x00, Int32ul),
     # TODO: Figure out which string type and encoding to use, might be ASCII
-    'MachineID'                     / PascalString(Bytes(16), 'utf16'),
-    'RawDroidPart1'                 / NTFSGUID,
-    'RawDroidPart2'                 / NTFSGUID,
-    'RawDroidBirthPart1'            / NTFSGUID,
-    'RawDroidBirthPart2'            / NTFSGUID
+    'MachineID'             / PascalString(Bytes(16), 'utf16'),
+    'RawDroidPart1'         / NTFSGUID,
+    'RawDroidPart2'         / NTFSGUID,
+    'RawDroidBirthPart1'    / NTFSGUID,
+    'RawDroidBirthPart2'    / NTFSGUID
 )
 
 LNKSpecialFolderDataBlock = Struct(
-    'Size'                          / Const(0x10, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x05', Int32ul),
     'KnownFolderID'                 / Int32ul,
     'LinkTargetIDListOffset'        / Int32ul
 )
 
 LNKShimDataBlock = Struct(
-    'Size'                          / Int32ul,
-    'Signature'                     / Const(b'\xA0\x00\x00\x08', Int32ul),
     # TODO: Look in Construct API docs for Computed type, should be TotalSize - 8
     'LayerName'                     / Pass
 )
 
-LNKPropertyStoreDataBlock = Struct(
-    'Size'                          / Int32ul,
-    'Signature'                     / Const(b'\xA0\x00\x00\x09', Int32ul),
-    # TODO: See MS-PROPSTORE to parse property store structure
-    'PropertyStore'                 / Pass
-)
-
 LNKKnownFolderDataBlock = Struct(
-    'Size'                          / Const(0x1C, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x0B', Int32ul),
     'KnownFolderID'                 / NTFSGUID,
     'LinkTargetIDListOffset'        / Int32ul
 )
 
 LNKIconEnvironmentDataBlock = Struct(
-    'Size'                          / Const(0x0314, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x07', Int32ul),
-    'RawTargetLocation'             / Bytes(260),
-    'RawUTargetLocation'            / Bytes(520)
+    'RawTargetLocation'     / Bytes(260),
+    'RawUTargetLocation'    / Bytes(520)
 )
 
 LNKEnvironmentVariablesDataBlock = Struct(
-    'Size'                          / Const(0x0314, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x01', Int32ul),
-    'RawTargetLocation'             / Bytes(260),
-    'RawUTargetLocation'            / Bytes(520)
+    'RawTargetLocation'     / Bytes(260),
+    'RawUTargetLocation'    / Bytes(520)
 )
 
 LNKDarwinDataBlock = Struct(
-    'Size'                          / Const(0x0314, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x06', Int32ul),
     'RawApplicationIdentifier'      / Bytes(260),
     'RawUApplicationIdentifier'     / Bytes(520)
 )
 
 LNKConsoleFEDataBlock = Struct(
-    'Size'                          / Const(0x0C, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x04', Int32ul),
     # TODO: See MS-LCID for language code identifiers to build Enum
-    'RawCodepage'                   / Int32ul
+    'RawCodepage'           / Int32ul
 )
 
 LNKConsoleDataBlock = Struct(
-    'Size'                          / Const(0xCC, Int32ul),
-    'Signature'                     / Const(b'\xA0\x00\x00\x02', Int32ul),
     'FillAttributes'                / LNKFillAttributesColors,
     'PopupFillAttributes'           / LNKFillAttributesColors,
     'ScreenBufferSizeX'             / Int16ul,
@@ -131,6 +106,11 @@ LNKConsoleDataBlock = Struct(
     'HistoryBufferCount'            / Int32ul,
     'RawHistoryDuplicatesAllowed'   / Int32ul,
     'RawColorTable'                 / Bytes(64)
+)
+
+LNKExtraDataBlockHeader = Struct(
+    'Size'                  / Int32ul,
+    'BlockType'             / If(this.Size >= 0x04, LNKExtraDataBlockType)
 )
 
 LNKNetworkShareInformationHeader = Struct(
