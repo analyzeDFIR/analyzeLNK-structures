@@ -72,8 +72,7 @@ LNKSpecialFolderDataBlock = Struct(
 )
 
 LNKShimDataBlock = Struct(
-    # TODO: Look in Construct API docs for Computed type, should be TotalSize - 8
-    'LayerName'                     / Pass
+    'LayerName'                     / LNKUnicodeCString
 )
 
 LNKKnownFolderDataBlock = Struct(
